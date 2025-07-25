@@ -18,7 +18,6 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 RUN mkdir ./logs
 COPY --from=builder /app/target/categoria-0.0.1-SNAPSHOT.jar .
-#EXPOSE 8081
 EXPOSE $PORT
 
 ENTRYPOINT ["java", "-jar", "categoria-0.0.1-SNAPSHOT.jar"]

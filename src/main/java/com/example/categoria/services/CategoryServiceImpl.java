@@ -1,51 +1,53 @@
 package com.example.categoria.services;
 
-import com.example.categoria.models.entities.Category;
-import com.example.categoria.repositories.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.categoria.models.entities.Category;
+import com.example.categoria.repositories.CategoryRepository;
+
 @Service
-public class CategoryServiceImpl {
+@Transactional
+public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    public Category createCategory(Category category) {
-        category.setId(null);
-        category.setFechaCreacion(LocalDateTime.now());
-        return categoryRepository.save(category);
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
+    @Override
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        return (List<Category>) categoryRepository.findAll();
     }
 
+    @Override
     public Optional<Category> getCategoryById(Long id) {
         return categoryRepository.findById(id);
     }
 
-    public Optional<Category> updateCategory(Long id, Category categoryDetails) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isEmpty()) {
-            return Optional.empty();
-        }
-        Category category = optionalCategory.get();
-        category.setNombre(categoryDetails.getNombre());
-        category.setDescripcion(categoryDetails.getDescripcion());
-        Category updated = categoryRepository.save(category);
-        return Optional.of(updated);
+    @Override
+    public Category createCategory(Category category) {
+        return categoryRepository.save(category);
     }
 
-    public boolean deleteCategory(Long id) {
+    @Override
+    public Category updateCategory(Long id, Category category) {
         if (!categoryRepository.existsById(id)) {
-            return false;
+            throw new IllegalArgumentException("Category with id " + id + " does not exist.");
+        }
+        category.setId(id);
+        return categoryRepository.save(category);
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new IllegalArgumentException("Category with id " + id + " does not exist.");
         }
         categoryRepository.deleteById(id);
-        return true;
     }
 }
