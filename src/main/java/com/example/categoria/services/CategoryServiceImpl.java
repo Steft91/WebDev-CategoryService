@@ -35,13 +35,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(Long id, Category category) {
-        if (!categoryRepository.existsById(id)) {
-            throw new IllegalArgumentException("Category with id " + id + " does not exist.");
-        }
-        category.setId(id);
-        return categoryRepository.save(category);
+    public Category updateCategory(Long id, Category updatedCategory) {
+        return categoryRepository.findById(id).map(existing -> {
+            existing.setName(updatedCategory.getName());
+            existing.setDescription(updatedCategory.getDescription());
+            // Conserva la fecha original
+            return categoryRepository.save(existing);
+        }).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
     }
+
 
     @Override
     public void deleteCategory(Long id) {

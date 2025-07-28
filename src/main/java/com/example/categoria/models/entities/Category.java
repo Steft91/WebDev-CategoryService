@@ -2,6 +2,7 @@ package com.example.categoria.models.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "categories")
@@ -16,7 +17,8 @@ public class Category {
 
     @Column(length = 255)
     private String description;
-
+     
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Guayaquil")
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -25,17 +27,14 @@ public class Category {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Constructor vacío
     public Category() {
     }
 
-    // Constructor con parámetros
     public Category(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
